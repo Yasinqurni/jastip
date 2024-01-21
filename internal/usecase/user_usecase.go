@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"jastip-app/config"
 	"jastip-app/internal/customerror"
 	"jastip-app/internal/entity/model"
@@ -8,6 +9,9 @@ import (
 	"jastip-app/internal/usecase/repo"
 	"jastip-app/pkg/bcrypt"
 	"jastip-app/pkg/jwt"
+	"jastip-app/pkg/logger"
+
+	"github.com/google/uuid"
 )
 
 type UserUsecase interface {
@@ -29,7 +33,8 @@ func NewUserUsecase(userRepo repo.UserRepo, config *config.Config) UserUsecase {
 
 func (uc *userUsecase) Register(req request.RegisterRequest) error {
 
-	_, err := uc.userRepo.GetByEmail(req.Email)
+	userd, err := uc.userRepo.GetByEmail(req.Email)
+	fmt.Println(userd)
 	if err == nil {
 		return &customerror.Err{
 			Code:   customerror.UserAlreadyRegistered,
@@ -40,13 +45,21 @@ func (uc *userUsecase) Register(req request.RegisterRequest) error {
 	if err != nil {
 		return err
 	}
+	id, err := uuid.NewRandom()
+	if err != nil {
+		logger.L().Error(err.Error())
+		return err
+	}
+
 	user := model.UserModel{
+		ID:          id.String(),
 		Name:        req.Name,
 		Address:     req.Address,
 		Email:       req.Email,
 		PhoneNumber: req.PhoneNumber,
 		Password:    hashedPassword,
 	}
+	fmt.Println(user)
 	if err := uc.userRepo.Create(user); err != nil {
 		return err
 	}

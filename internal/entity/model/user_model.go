@@ -14,7 +14,7 @@ type UserModel struct {
 	DeletedAt   time.Time
 
 	//relation
-	Subscribe *SubscribeModel
+	Subscribe *SubscribeModel `gorm:"-"`
 }
 
 func (UserModel) TableName() string {
