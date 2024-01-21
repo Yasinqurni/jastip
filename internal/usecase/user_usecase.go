@@ -58,8 +58,9 @@ func (uc *userUsecase) Register(req request.RegisterRequest) error {
 		Email:       req.Email,
 		PhoneNumber: req.PhoneNumber,
 		Password:    hashedPassword,
+		Role:        model.RoleUser(model.ROLE_USER),
 	}
-	fmt.Println(user)
+
 	if err := uc.userRepo.Create(user); err != nil {
 		return err
 	}
