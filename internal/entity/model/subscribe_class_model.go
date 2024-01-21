@@ -12,3 +12,7 @@ type SubscribeClassModel struct {
 	UpdatedAt   time.Time
 	DeletedAt   time.Time
 }
+
+func (SubscribeClassModel) TableName() string {
+	return "subscribe_class"
+}
