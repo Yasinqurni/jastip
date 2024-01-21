@@ -29,7 +29,7 @@ func GenerateToken(payload JWTPayload) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(payload.SecretKey)
+	tokenString, err := token.SignedString([]byte(payload.SecretKey))
 	if err != nil {
 		logger.L().Error(err.Error())
 		return "", err
