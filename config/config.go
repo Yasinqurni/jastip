@@ -15,11 +15,7 @@ type (
 		HTTP `yaml:"http"`
 		Log  `yaml:"logger"`
 		DB
-		AWS
 		JWT
-		Mongo
-		GRPC `yaml:"grpc"`
-		Upstore
 	}
 
 	// App -.
@@ -48,36 +44,6 @@ type (
 	// DB
 	DB struct {
 		URL string `env-required:"true" env:"DB_URL"`
-	}
-
-	// AWS
-	AWS struct {
-		AccessKeyID          string `env:"AWS_ACCESS_KEY_ID"`
-		SecretAcessKey       string `env:"AWS_SECRET_ACCESS_KEY"`
-		DefaultRegion        string `env:"AWS_DEFAULT_REGION"`
-		Bucket               string `env:"AWS_BUCKET"`
-		UsePathStyleEndpoint bool   `env:"AWS_USE_PATH_STYLE_ENDPOINT"`
-	}
-
-	// Mongo
-	Mongo struct {
-		DSN string `env-required:"true" env:"MONGO_DSN"`
-		DB  string `env-required:"true" env:"MONGO_DB"`
-	}
-
-	// gRPC
-	GRPC struct {
-		Port string `env:"GRPC_PORT" yaml:"port"`
-	}
-
-	// Upstore
-	Upstore struct {
-		ApiBaseUrl string `env-required:"true" env:"UPSTORE_API_BASE_URL"`
-		ApiToken   string `env-required:"true" env:"UPSTORE_API_BACKSTAGE_TOKEN"`
-		WalletID   string `env-required:"true" env:"UPSTORE_WALLET_ID"`
-		// e.g. /api/v8.0/...
-		ApiVBaseUrl       string `env-required:"true" env:"UPSTORE_API_V_URL"`
-		GoldpriceApiToken string `env-required:"true" env:"UPSTORE_GOLDPRICE_API_TOKEN"`
 	}
 )
 

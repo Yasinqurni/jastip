@@ -2,10 +2,8 @@
 package app
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"jastip-app/config"
-	grpccontroller "jastip-app/internal/controller/grpc"
 	v1 "jastip-app/internal/controller/http/v1"
 	"jastip-app/internal/middleware"
 	"jastip-app/internal/usecase"
@@ -22,12 +19,8 @@ import (
 	"jastip-app/pkg/database"
 	"jastip-app/pkg/httpserver"
 	"jastip-app/pkg/logger"
-	"jastip-app/pkg/upload"
-
-	grpcserver "jastip-app/pkg/grpc/server"
 
 	cors "github.com/rs/cors/wrapper/gin"
-	"google.golang.org/grpc"
 )
 
 // Run creates objects via constructors.
@@ -44,18 +37,12 @@ func Run(cfg *config.Config) {
 	}
 	time.Local = krTime
 
-	// Uploader
-	var uploader upload.Uploader
-	uploader.ConnectS3(cfg)
-
 	// App
 	app := app.App{
 		DB: app.Database{
-			Gorm:  database.ConnectGorm("mysql", cfg.DB.URL),
-			Mongo: database.ConnectMongo(context.Background(), cfg.Mongo.DSN, cfg.Mongo.DB),
+			Gorm: database.ConnectGorm("mysql", cfg.DB.URL),
 		},
-		Uploader: &uploader,
-		Config:   cfg,
+		Config: cfg,
 	}
 
 	// Use case
@@ -68,20 +55,6 @@ func Run(cfg *config.Config) {
 	v1.NewRouter(handler, useCase)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
 
-	// gRPC Server
-	grpcPort := fmt.Sprintf(":%s", cfg.GRPC.Port)
-	lis, err := net.Listen("tcp", grpcPort)
-	if err != nil {
-		log.Fatal(err)
-	}
-	grpcSrv := grpc.NewServer()
-	grpccontroller.NewGrpcServer(grpcSrv, useCase)
-	grpcServer := grpcserver.New(
-		grpcSrv,
-		lis,
-		grpcPort,
-	)
-
 	// Waiting signal
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
@@ -91,8 +64,6 @@ func Run(cfg *config.Config) {
 		log.Println("app - Run - signal: ", s.String())
 	case err = <-httpServer.Notify():
 		log.Println(fmt.Errorf("app - Run - httpServer.Notify: %w", err).Error())
-	case err = <-grpcServer.Notify():
-		log.Println(fmt.Errorf("app - Run - grpcServer.Notify: %w", err).Error())
 	}
 
 	// Shutdown
