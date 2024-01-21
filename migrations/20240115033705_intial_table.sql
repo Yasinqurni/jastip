@@ -3,7 +3,7 @@ CREATE TABLE `users` (
   `id` varchar(255) UNIQUE PRIMARY KEY,
   `name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `email` varchar(255) UNIQUE NOT NULL,
   `phone_number` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` timestamp,
