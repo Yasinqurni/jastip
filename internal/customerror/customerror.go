@@ -17,8 +17,8 @@ const (
 	CodeErrAlreadyApproved string = "already approved"
 	// Already rejected
 	CodeErrAlreadyRejected string = "already rejected"
-	// Goldpay Trad is inactive
-	CodeErrInactiveGoldpayTrade string = "inactive_goldpay_trade"
+	//user duplicate
+	UserAlreadyRegistered = "user already registered"
 )
 
 type Err struct {

@@ -11,6 +11,7 @@ import (
 
 	// Swagger docs.
 	_ "jastip-app/docs"
+	"jastip-app/internal/controller/http/v1/user"
 	"jastip-app/internal/usecase"
 )
 
@@ -36,6 +37,8 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase) {
 	handler.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// Routers
-	handler.Group("/api/v1.0")
+	r := handler.Group("/api/v1.0")
 
+	//user routes
+	user.UserRoutes(r, uc.User, uc.App)
 }
